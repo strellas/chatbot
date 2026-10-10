@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- NUEVO: pantallas de login no deben indexarse -->
+    <meta name="robots" content="noindex">
+    <meta name="description" content="Asistente de IA.">
+    <meta name="theme-color" content="#6d4aff">
+    <meta name="color-scheme" content="dark light">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <title>Acceder — Chatbot</title>
+
+    <link rel="icon" type="image/svg+xml" href="../../ass/img/favicon.svg">
+    <link rel="stylesheet" href="../../ass/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body data-page="login" class="theme-dark">
+    <!-- NUEVO: los usuarios sin JS deben poder salir del ciclo -->
+    <noscript>
+        <div class="noscript-warning">
+            <span>⚠️</span>
+            <p>Esta aplicación requiere JavaScript activado.</p>
+        </div>
+    </noscript>
+
+    <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" title="Alternar modo oscuro/claro" aria-pressed="false">
+        <span class="icon moon">🌙</span>
+        <span class="icon sun hidden">☀️</span>
+    </button>
+
+    <main class="auth-page">
+        <div class="auth-card glass-effect">
+            <div class="auth-header">
+                <div class="auth-logo animate-bounce" aria-hidden="true">🤖</div>
+                <h1 id="auth-title" class="animate-fade-in">Bienvenido de nuevo</h1>
+                <p id="auth-sub" class="sub animate-fade-in-delay">Inicia sesión para continuar tu conversación</p>
+            </div>
+
+            <div class="auth-error-box hidden" id="auth-error" role="alert" aria-live="assertive">
+                <span class="error-icon">⚠️</span>
+                <span class="error-message"></span>
+            </div>
+
+            <!-- Formulario Login -->
+            <form id="login-form" class="animate-slide-up" novalidate aria-labelledby="auth-title">
+                <div class="input-group">
+                    <label for="login-user">Usuario</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">👤</span>
+                        <input type="text" id="login-user" name="username" required autocomplete="username"
+                               minlength="3" maxlength="32" placeholder="tu_usuario"
+                               aria-describedby="login-user-hint">
+                    </div>
+                    <!-- NUEVO: pista de formato accesible -->
+                    <p class="input-hint" id="login-user-hint">Entre 3 y 32 caracteres</p>
+                </div>
+                <div class="input-group">
+                    <label for="login-pass">Contraseña</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">🔒</span>
+                        <input type="password" id="login-pass" name="password" required
+                               autocomplete="current-password" placeholder="••••••••">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary btn-animated" id="login-submit">
+                    <span class="btn-text">Entrar</span>
+                    <span class="btn-loader hidden" aria-hidden="true">⏳</span>
+                </button>
+            </form>
+
+            <!-- Formulario Registro -->
+            <form id="register-form" class="hidden animate-slide-up" novalidate>
+                <div class="input-group">
+                    <label for="reg-user">Elige un usuario</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">👤</span>
+                        <input type="text" id="reg-user" name="new-username" required minlength="3" maxlength="32"
+                               autocomplete="off" placeholder="nuevo_usuario"
+                               aria-describedby="reg-user-hint">
+                    </div>
+                    <p class="input-hint" id="reg-user-hint">Entre 3 y 32 caracteres</p>
+                </div>
+                <div class="input-group">
+                    <label for="reg-pass">Elige una contraseña</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">🔒</span>
+                        <input type="password" id="reg-pass" name="new-password" required minlength="6" maxlength="72"
+                               autocomplete="new-password" placeholder="Mínimo 6 caracteres"
+                               aria-describedby="reg-pass-strength">
+                    </div>
+                    <!-- NUEVO: indicador visual de fuerza de contraseña -->
+                    <div class="strength-meter hidden" id="reg-pass-strength" aria-live="polite">
+                        <div class="strength-bars" data-level="0">
+                            <span></span><span></span><span></span><span></span>
+                        </div>
+                        <span class="strength-label">Seguridad de la contraseña</span>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="reg-pass-confirm">Confirmar contraseña</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">✓</span>
+                        <input type="password" id="reg-pass-confirm" name="password-confirm" required
+                               autocomplete="new-password" placeholder="Repite la contraseña">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary btn-animated" id="reg-submit">
+                    <span class="btn-text">Crear cuenta</span>
+                    <span class="btn-loader hidden" aria-hidden="true">⏳</span>
+                </button>
+            </form>
+
+            <div class="auth-divider" aria-hidden="true">
+                <span>o</span>
+            </div>
+
+            <p class="auth-switch" id="auth-switch">
+                ¿No tienes cuenta? <a href="#" id="toggle-link" tabindex="0">Regístrate</a>
+            </p>
+
+            <div class="auth-footer">
+                <p class="text-muted">🔐 Datos están encriptados y nunca compartidos</p>
+            </div>
+        </div>
+    </main>
+    <script type="module" src="../../ass/js/script.js"></script>
+</body>
+</html>

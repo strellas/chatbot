@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Chatbot con IA.">
+    <meta name="theme-color" content="#6d4aff">
+    <meta name="color-scheme" content="dark light">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <!-- NUEVO: SEO/Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Chatbot — IA">
+    <meta property="og:description" content="Asistente de IA.">
+    <meta property="og:locale" content="es_ES">
+    <link rel="canonical" href="/">
+
+    <title>Chatbot — IA</title>
+
+    <!-- NUEVO: favicon -->
+    <link rel="icon" type="image/svg+xml" href="ass/img/favicon.svg">
+
+    <link rel="stylesheet" href="ass/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body data-page="root" class="theme-dark">
+    <!-- NUEVO: mensaje accesible mientras carga -->
+    <noscript>
+        <div class="noscript-warning">
+            <span>⚠️</span>
+            <p>Esta aplicación requiere JavaScript activado.</p>
+        </div>
+    </noscript>
+
+    <!-- Pantalla de carga -->
+    <div class="loader-screen" role="status" aria-live="polite">
+        <div class="logo-loader">
+            <div class="spinner-ring" aria-hidden="true"></div>
+            <div class="logo-icon">🤖</div>
+        </div>
+        <p class="loading-text">Iniciando Chatbot…</p>
+        <!-- NUEVO: barra de progreso indeterminada, más moderna que el spinner solo -->
+        <div class="loading-bar" aria-hidden="true"></div>
+    </div>
+
+    <script type="module" src="ass/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="robots" content="noindex">
+    <meta name="description" content="Tu asistente de IA con historial persistente y respuestas en tiempo real.">
+    <meta name="theme-color" content="#6d4aff">
+    <meta name="color-scheme" content="dark light">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+
+    <title>Chat — Chatbot</title>
+
+    <link rel="icon" type="image/svg+xml" href="../../ass/img/favicon.svg">
+    <link rel="stylesheet" href="../../ass/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body data-page="chat" class="theme-dark">
+    <!-- NUEVO: skip-link accesible -->
+    <a class="skip-link" href="#chat-input">Saltar al campo de mensaje</a>
+
+    <div class="app-container">
+        <!-- Sidebar / Panel Lateral -->
+        <aside class="sidebar" id="sidebar" aria-label="Panel de navegación">
+            <div class="sidebar-brand">
+                <div class="brand-icon animate-pulse" aria-hidden="true">🤖</div>
+                <div class="brand-text">
+                    <span class="brand-name">Chatbot</span>
+                    <span class="brand-status online-dot" id="sidebar-status"></span>
+                </div>
+            </div>
+
+            <button class="new-chat-btn" id="new-chat-btn" aria-label="Nueva conversación">
+                <span class="btn-icon" aria-hidden="true">+</span>
+                <span class="btn-text">Nueva consulta</span>
+                <span class="btn-shortcut hidden" aria-hidden="true">Ctrl+N</span>
+            </button>
+
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <span class="section-title" id="history-title">Historial reciente</span>
+                    <button class="mini-icon-btn" id="refresh-history" title="Actualizar" aria-label="Actualizar historial">🔄</button>
+                </div>
+                <nav class="history-list" id="history-list" aria-labelledby="history-title">
+                    <!-- NUEVO: skeletons mientras el historial carga -->
+                    <div class="history-skeleton" aria-hidden="true">
+                        <div class="skel-item"></div>
+                        <div class="skel-item"></div>
+                        <div class="skel-item"></div>
+                    </div>
+                </nav>
+            </div>
+
+            <div class="sidebar-spacer"></div>
+
+            <div class="sidebar-actions">
+                <div class="user-mini-profile" id="user-mini-profile">
+                    <div class="avatar-circle" aria-hidden="true">👤</div>
+                    <span class="username-display" id="display-username">Usuario</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn danger" id="clear-history-btn" title="Borrar todo el historial" aria-label="Borrar historial completo">
+                        <span class="action-icon" aria-hidden="true">🗑️</span>
+                        <span class="action-text">Borrar historial</span>
+                    </button>
+                    <button class="action-btn" id="logout-btn" title="Cerrar sesión" aria-label="Cerrar sesión">
+                        <span class="action-icon" aria-hidden="true">↩︎</span>
+                        <span class="action-text">Salir</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <div class="backdrop" id="backdrop"></div>
+
+        <!-- Contenido Principal -->
+        <section class="main-content">
+            <!-- Topbar Superior -->
+            <header class="topbar glass-effect">
+                <div class="topbar-left">
+                    <button class="menu-btn" id="menu-btn" aria-label="Abrir menú lateral"
+                            aria-expanded="false" aria-controls="sidebar">
+                        <span class="hamburger" aria-hidden="true">☰</span>
+                    </button>
+                    <h1 class="page-title">Chat</h1>
+                </div>
+
+                <div class="topbar-center">
+                    <button class="model-selector" id="model-selector" title="Modelo activo"
+                            aria-haspopup="listbox" aria-label="Cambiar modelo">
+                        <span class="model-icon" aria-hidden="true">🧠</span>
+                        <span class="model-name" id="model-name">GGUF</span>
+                    </button>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="connection-status" id="connection-status">
+                        <span class="status-dot connected" id="status-indicator"></span>
+                        <span class="status-text" id="status-text">En línea</span>
+                    </div>
+
+                    <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema"
+                            aria-pressed="false">
+                        <span class="icon moon" aria-hidden="true">🌙</span>
+                        <span class="icon sun hidden" aria-hidden="true">☀️</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Banner de conexión -->
+            <div class="conn-banner conn-offline hidden" id="conn-banner" role="alert" aria-live="assertive">
+                <span class="banner-icon" aria-hidden="true">⚠️</span>
+                <span class="banner-text">Sin conexión. Reintentando…</span>
+                <button class="retry-btn" id="retry-conn">Reintentar</button>
+            </div>
+            <div class="conn-banner conn-warning hidden" id="conn-warning" role="status" aria-live="polite">
+                <span class="banner-icon" aria-hidden="true">ℹ️</span>
+                <span class="banner-text">Proveedores: <span id="provider-status">Cargando...</span></span>
+            </div>
+
+            <!-- Área de Chat -->
+            <div class="chat-scroll-container" id="chat-scroll-container" tabindex="-1">
+                <div class="chat-box" id="chat-box" aria-live="polite" aria-label="Mensajes del chat">
+                    <div class="chat-inner" id="chat-inner">
+
+                        <!-- Estado vacío con sugerencias -->
+                        <div class="empty-state" id="empty-state">
+                            <div class="empty-animation">
+                                <span class="emoji-large" aria-hidden="true">👋</span>
+                                <div class="sparkle-bg" aria-hidden="true"></div>
+                            </div>
+                            <h2 class="empty-title">¿En qué te ayudo hoy?</h2>
+                            <p class="empty-sub">Soy un chatbot con IA local. Pregúntame lo que quieras.</p>
+
+                            <div class="prompts-grid" id="prompts-grid" role="list">
+                                <button class="prompt-chip" role="listitem" data-prompt="Explícame qué es una API REST">
+                                    <span class="chip-icon" aria-hidden="true">📡</span>
+                                    <span class="chip-text">¿Qué es una API REST?</span>
+                                </button>
+                                <button class="prompt-chip" role="listitem" data-prompt="Escríbeme un script de Python para leer CSV">
+                                    <span class="chip-icon" aria-hidden="true">🐍</span>
+                                    <span class="chip-text">Script Python para CSV</span>
+                                </button>
+                                <button class="prompt-chip" role="listitem" data-prompt="Dame ideas para un proyecto Arduino">
+                                    <span class="chip-icon" aria-hidden="true">🎛️</span>
+                                    <span class="chip-text">Ideas Arduino</span>
+                                </button>
+                                <button class="prompt-chip" role="listitem" data-prompt="Resume cómo funcionan los transformers">
+                                    <span class="chip-icon" aria-hidden="true">🔄</span>
+                                    <span class="chip-text">Transformers explicados</span>
+                                </button>
+                            </div>
+
+                            <div class="features-highlight">
+                                <div class="feature-badge">
+                                    <span aria-hidden="true">🔐</span>
+                                    <span>Privacidad total — todo local</span>
+                                </div>
+                                <div class="feature-badge">
+                                    <span aria-hidden="true">⚡</span>
+                                    <span>Respuestas en tiempo real</span>
+                                </div>
+                                <div class="feature-badge">
+                                    <span aria-hidden="true">💾</span>
+                                    <span>Historial persistente</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NUEVO: plantilla de mensaje del asistente con acciones -->
+                        <template id="msg-template">
+                            <article class="message msg-assistant">
+                                <div class="msg-avatar" aria-hidden="true">🤖</div>
+                                <div class="msg-body">
+                                    <header class="msg-header">
+                                        <span class="msg-author">Asistente</span>
+                                        <time class="msg-time"></time>
+                                    </header>
+                                    <div class="msg-content"></div>
+                                    <!-- NUEVO: feedback y utilidades (patrón 2026) -->
+                                    <footer class="msg-actions">
+                                        <button class="msg-action-btn" data-action="copy" title="Copiar" aria-label="Copiar respuesta">📋</button>
+                                        <button class="msg-action-btn" data-action="regenerate" title="Regenerar" aria-label="Regenerar respuesta">🔁</button>
+                                        <button class="msg-action-btn" data-action="good" title="Buena respuesta" aria-label="Valorar positivamente">👍</button>
+                                        <button class="msg-action-btn" data-action="bad" title="Mala respuesta" aria-label="Valorar negativamente">👎</button>
+                                    </footer>
+                                </div>
+                            </article>
+                        </template>
+
+                        <!-- NUEVO: indicador de escritura (typing) -->
+                        <div class="typing-indicator hidden" id="typing-indicator" role="status" aria-label="El asistente está escribiendo">
+                            <div class="typing-avatar" aria-hidden="true">🤖</div>
+                            <div class="typing-dots" aria-hidden="true">
+                                <span></span><span></span><span></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- NUEVO: botón flotante para bajar al último mensaje -->
+                <button class="scroll-bottom-btn hidden" id="scroll-bottom-btn" title="Ir al último mensaje" aria-label="Ir al último mensaje">↓</button>
+            </div>
+
+            <!-- Área de Entrada -->
+            <div class="input-container">
+                <div class="input-glass glass-effect">
+                    <!-- NUEVO: contador de caracteres -->
+                    <textarea id="chat-input" placeholder="Escribe un mensaje o usa Ctrl+Enter para enviar…"
+                              rows="1" autocomplete="off" autocapitalize="sentences" spellcheck="true"
+                              maxlength="4096" aria-label="Campo de mensaje"
+                              aria-describedby="char-counter input-hints"></textarea>
+
+                    <div class="input-actions">
+                        <button class="input-action-btn" id="stop-btn" title="Detener generación" aria-label="Detener generación" hidden>
+                            <span class="action-btn-icon stop-icon" aria-hidden="true">⬛</span>
+                        </button>
+                        <button class="send-btn" id="send-btn" aria-label="Enviar mensaje">
+                            <span class="send-icon" aria-hidden="true">➤</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="input-hints" id="input-hints">
+                    <span class="hint-item">Pulsa <kbd>Enter</kbd> para enviar</span>
+                    <span class="hint-separator">•</span>
+                    <span class="hint-item"><kbd>Shift+Enter</kbd> para nueva línea</span>
+                    <span class="hint-separator">•</span>
+                    <span class="hint-item"><kbd>Ctrl+Enter</kbd> para enviar rápido</span>
+                    <span class="hint-counter" id="char-counter">0 / 4096</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Modal Confirmación -->
+    <dialog class="modal-dialog" id="confirm-modal" aria-labelledby="confirm-title">
+        <div class="modal-content glass-effect">
+            <div class="modal-header">
+                <h3 class="modal-title" id="confirm-title">¿Estás seguro?</h3>
+                <button class="modal-close" id="modal-close" aria-label="Cerrar diálogo">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="modal-cancel">Cancelar</button>
+                <button class="btn-danger" id="modal-confirm">Confirmar</button>
+            </div>
+        </div>
+    </dialog>
+
+    <script type="module" src="../../ass/js/script.js"></script>
+</body>
+</html>
