@@ -72,56 +72,6 @@
                 </button>
             </form>
 
-            <!-- Formulario Registro -->
-            <form id="register-form" class="hidden animate-slide-up" novalidate>
-                <div class="input-group">
-                    <label for="reg-user">Elige un usuario</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon" aria-hidden="true">👤</span>
-                        <input type="text" id="reg-user" name="new-username" required minlength="3" maxlength="32"
-                               autocomplete="off" placeholder="nuevo_usuario"
-                               aria-describedby="reg-user-hint">
-                    </div>
-                    <p class="input-hint" id="reg-user-hint">Entre 3 y 32 caracteres</p>
-                </div>
-                <div class="input-group">
-                    <label for="reg-pass">Elige una contraseña</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon" aria-hidden="true">🔒</span>
-                        <input type="password" id="reg-pass" name="new-password" required minlength="6" maxlength="72"
-                               autocomplete="new-password" placeholder="Mínimo 6 caracteres"
-                               aria-describedby="reg-pass-strength">
-                    </div>
-                    <!-- NUEVO: indicador visual de fuerza de contraseña -->
-                    <div class="strength-meter hidden" id="reg-pass-strength" aria-live="polite">
-                        <div class="strength-bars" data-level="0">
-                            <span></span><span></span><span></span><span></span>
-                        </div>
-                        <span class="strength-label">Seguridad de la contraseña</span>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label for="reg-pass-confirm">Confirmar contraseña</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon" aria-hidden="true">✓</span>
-                        <input type="password" id="reg-pass-confirm" name="password-confirm" required
-                               autocomplete="new-password" placeholder="Repite la contraseña">
-                    </div>
-                </div>
-                <button type="submit" class="btn-primary btn-animated" id="reg-submit">
-                    <span class="btn-text">Crear cuenta</span>
-                    <span class="btn-loader hidden" aria-hidden="true">⏳</span>
-                </button>
-            </form>
-
-            <div class="auth-divider" aria-hidden="true">
-                <span>o</span>
-            </div>
-
-            <p class="auth-switch" id="auth-switch">
-                ¿No tienes cuenta? <a href="#" id="toggle-link" tabindex="0">Regístrate</a>
-            </p>
-
             <div class="auth-footer">
                 <p class="text-muted">🔐 Datos están encriptados y nunca compartidos</p>
             </div>
