@@ -123,6 +123,10 @@ function handleAuthFailure() {
 
 // --- Auth Endpoints ---
 
+export async function register(username, password) {
+    return http("POST", "/auth/register", { username, password });
+}
+
 export async function login(username, password) {
     const data = await http("POST", "/auth/login", { username, password });
     currentToken = data.access_token;

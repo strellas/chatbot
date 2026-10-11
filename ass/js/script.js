@@ -1,5 +1,5 @@
 import {
-    init, login, logout, checkMe,
+    init, login, register, logout, checkMe,
     connectWs, sendChat, sendWs, requestHistory,
     stopGeneration, events, ROUTES,
 } from '../api/api.js';
@@ -110,13 +110,22 @@ function hideLoader() {
 }
 
 /* ============================================================
-   PÁGINA: LOGIN
+   PÁGINA: LOGIN / REGISTRO
    ============================================================ */
 
 function setupLogin() {
     const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
     const errBox = document.getElementById('auth-error');
     const errMsg = errBox.querySelector('.error-message');
+    const title = document.getElementById('auth-title');
+    const sub = document.getElementById('auth-sub');
+    const switchP = document.getElementById('auth-switch');
+    const regPass = document.getElementById('reg-pass');
+    const regPassConfirm = document.getElementById('reg-pass-confirm');
+    const strength = document.getElementById('reg-pass-strength');
+    const bars = strength?.querySelector('.strength-bars');
+    const label = strength?.querySelector('.strength-label');
 
     function showError(msg) {
         errMsg.textContent = msg;
@@ -131,6 +140,44 @@ function setupLogin() {
         if (!loading) btn.querySelector('.btn-text').textContent = textIdle;
     }
 
+    // Alternar login ↔ registro. Delegación sobre el párrafo padre para
+    // sobrevivir al reemplazo de innerHTML sin acumular listeners.
+    function toggleMode() {
+        const toRegister = !loginForm.classList.contains('hidden');
+        loginForm.classList.toggle('hidden', toRegister);
+        registerForm.classList.toggle('hidden', !toRegister);
+        title.textContent = toRegister ? 'Crear tu cuenta' : 'Bienvenido de nuevo';
+        sub.textContent = toRegister ? 'Elige usuario y contraseña' : 'Inicia sesión para continuar';
+        switchP.innerHTML = toRegister
+            ? '¿Ya tienes cuenta? <a href="#">Entrar</a>'
+            : '¿No tienes cuenta? <a href="#">Regístrate</a>';
+        errBox.classList.add('hidden');
+    }
+    switchP.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A') { e.preventDefault(); toggleMode(); }
+    });
+
+    // Medidor de fuerza de contraseña (componente opcional, con guard)
+    function updateStrength() {
+        if (!bars || !strength) return;
+        const v = regPass.value;
+        let level = 0;
+        if (v.length >= 6) level++;
+        if (v.length >= 10) level++;
+        if ((/[a-z]/.test(v) && /[A-Z]/.test(v)) || /\d/.test(v)) level++;
+        if (/[^a-zA-Z0-9]/.test(v) && v.length >= 8) level++;
+        level = v.length === 0 ? 0 : Math.max(1, level);
+        strength.classList.toggle('hidden', v.length === 0);
+        bars.dataset.level = String(Math.min(level, 4));
+        if (label) {
+            label.textContent = ['Muy débil', 'Débil', 'Aceptable', 'Fuerte', 'Excelente'][Math.min(level, 4)];
+        }
+        if (regPassConfirm.value) {
+            regPassConfirm.setAttribute('aria-invalid', String(regPassConfirm.value !== v));
+        }
+    }
+    if (regPass) regPass.addEventListener('input', updateStrength);
+
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('login-submit');
@@ -143,6 +190,25 @@ function setupLogin() {
         } catch (err) {
             showError('❌ ' + err.message);
             setBtnLoading(btn, false, 'Entrar');
+        }
+    });
+
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const pass = regPass.value;
+        if (pass !== regPassConfirm.value) {
+            showError('❌ Las contraseñas no coinciden');
+            return;
+        }
+        const btn = document.getElementById('reg-submit');
+        setBtnLoading(btn, true);
+        try {
+            await register(document.getElementById('reg-user').value.trim(), pass);
+            showToast('✅ Cuenta creada. Ahora inicia sesión.', 'success');
+            setTimeout(() => window.location.reload(), 900);
+        } catch (err) {
+            showError('❌ ' + err.message);
+            setBtnLoading(btn, false, 'Crear cuenta');
         }
     });
 }
