@@ -10,7 +10,7 @@
     <meta name="color-scheme" content="dark light">
     <meta name="referrer" content="strict-origin-when-cross-origin">
 
-    <title>Acceder — Chatbot</title>
+    <title>Entrar — Chatbot</title>
 
     <link rel="icon" type="image/svg+xml" href="../../ass/img/favicon.svg">
     <link rel="stylesheet" href="../../ass/css/style.css">
@@ -36,8 +36,8 @@
         <div class="auth-card glass-effect">
             <div class="auth-header">
                 <div class="auth-logo animate-bounce" aria-hidden="true">🤖</div>
-                <h1 id="auth-title" class="animate-fade-in">Bienvenido de nuevo</h1>
-                <p id="auth-sub" class="sub animate-fade-in-delay">Inicia sesión para continuar tu conversación</p>
+                <h1 id="auth-title" class="animate-fade-in">Entra a tu chat</h1>
+                <p id="auth-sub" class="sub animate-fade-in-delay">Elige un nombre y una contraseña</p>
             </div>
 
             <div class="auth-error-box hidden" id="auth-error" role="alert" aria-live="assertive">
@@ -45,25 +45,24 @@
                 <span class="error-message"></span>
             </div>
 
-            <!-- Formulario Login -->
+            <!-- Formulario único: nombre + contraseña (sin registro) -->
             <form id="login-form" class="animate-slide-up" novalidate aria-labelledby="auth-title">
                 <div class="input-group">
-                    <label for="login-user">Usuario</label>
+                    <label for="login-user">Nombre</label>
                     <div class="input-wrapper">
                         <span class="input-icon" aria-hidden="true">👤</span>
                         <input type="text" id="login-user" name="username" required autocomplete="username"
-                               minlength="3" maxlength="32" placeholder="tu_usuario"
+                               minlength="3" maxlength="32" placeholder="tu_nombre"
                                aria-describedby="login-user-hint">
                     </div>
-                    <!-- NUEVO: pista de formato accesible -->
-                    <p class="input-hint" id="login-user-hint">Entre 3 y 32 caracteres</p>
+                    <p class="input-hint" id="login-user-hint">Entre 3 y 32 caracteres. Si el nombre es nuevo, entra al instante.</p>
                 </div>
                 <div class="input-group">
                     <label for="login-pass">Contraseña</label>
                     <div class="input-wrapper">
                         <span class="input-icon" aria-hidden="true">🔒</span>
-                        <input type="password" id="login-pass" name="password" required
-                               autocomplete="current-password" placeholder="••••••••">
+                        <input type="password" id="login-pass" name="password" required minlength="6"
+                               autocomplete="current-password" placeholder="Mínimo 6 caracteres">
                     </div>
                 </div>
                 <button type="submit" class="btn-primary btn-animated" id="login-submit">
@@ -72,57 +71,8 @@
                 </button>
             </form>
 
-            <!-- Formulario Registro -->
-            <form id="register-form" class="hidden animate-slide-up" novalidate>
-                <div class="input-group">
-                    <label for="reg-user">Elige un usuario</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon" aria-hidden="true">👤</span>
-                        <input type="text" id="reg-user" name="new-username" required minlength="3" maxlength="32"
-                               autocomplete="off" placeholder="nuevo_usuario"
-                               aria-describedby="reg-user-hint">
-                    </div>
-                    <p class="input-hint" id="reg-user-hint">Entre 3 y 32 caracteres</p>
-                </div>
-                <div class="input-group">
-                    <label for="reg-pass">Elige una contraseña</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon" aria-hidden="true">🔒</span>
-                        <input type="password" id="reg-pass" name="new-password" required minlength="6" maxlength="72"
-                               autocomplete="new-password" placeholder="Mínimo 6 caracteres"
-                               aria-describedby="reg-pass-strength">
-                    </div>
-                    <div class="strength-meter hidden" id="reg-pass-strength" aria-live="polite">
-                        <div class="strength-bars" data-level="0">
-                            <span></span><span></span><span></span><span></span>
-                        </div>
-                        <span class="strength-label">Seguridad de la contraseña</span>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label for="reg-pass-confirm">Confirmar contraseña</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon" aria-hidden="true">✓</span>
-                        <input type="password" id="reg-pass-confirm" name="password-confirm" required
-                               autocomplete="new-password" placeholder="Repite la contraseña">
-                    </div>
-                </div>
-                <button type="submit" class="btn-primary btn-animated" id="reg-submit">
-                    <span class="btn-text">Crear cuenta</span>
-                    <span class="btn-loader hidden" aria-hidden="true">⏳</span>
-                </button>
-            </form>
-
-            <div class="auth-divider" aria-hidden="true">
-                <span>o</span>
-            </div>
-
-            <p class="auth-switch" id="auth-switch">
-                ¿No tienes cuenta? <a href="#" id="toggle-link" tabindex="0">Regístrate</a>
-            </p>
-
             <div class="auth-footer">
-                <p class="text-muted">🔐 Datos están encriptados y nunca compartidos</p>
+                <p class="text-muted">🔐 Sin registros: entras al instante con tu nombre y contraseña</p>
             </div>
         </div>
     </main>
